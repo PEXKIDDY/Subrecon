@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --font-grotesk: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+html,
+body {
+  background: #080b14;
+  color: #c7d2e4;
+  font-feature-settings: "ss01", "cv01";
+}
+
+/* Subtle blueprint grid that sits behind the whole console. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(53, 224, 212, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 224, 212, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 35%, transparent 100%);
+}
+
+@layer components {
+  /* The signature: a thin scanline that marks anything "live" or active. */
+  .scanline {
+    position: relative;
+    overflow: hidden;
+  }
+  .scanline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #35e0d4, transparent);
+    opacity: 0.7;
+    animation: sweep 3.2s linear infinite;
+  }
+  @keyframes sweep {
+    0% { transform: translateY(0); opacity: 0; }
+    8% { opacity: 0.8; }
+    92% { opacity: 0.8; }
+    100% { transform: translateY(var(--scan-h, 220px)); opacity: 0; }
+  }
+
+  .panel {
+    @apply rounded-lg border border-edge bg-ink-800/70 backdrop-blur-sm;
+  }
+  .eyebrow {
+    @apply font-mono text-[11px] uppercase tracking-[0.22em] text-scan/70;
+  }
+  .data {
+    @apply font-mono tabular-nums;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-edge
+           bg-ink-700 px-3 py-2 text-sm font-medium text-slate-200 transition
+           hover:border-scan/50 hover:text-white disabled:opacity-40 disabled:hover:border-edge;
+  }
+  .btn-scan {
+    @apply border-scan/40 bg-scan/10 text-scan hover:bg-scan/20 hover:text-scan;
+  }
+  .input {
+    @apply w-full rounded-md border border-edge bg-ink-900/80 px-3 py-2 text-sm
+           text-slate-100 placeholder:text-slate-500 outline-none
+           focus:border-scan/60 focus:ring-1 focus:ring-scan/30;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scanline::after { animation: none; opacity: 0.5; }
+}
+
+/* Quiet, on-theme scrollbars so dense tables don't break the mood. */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0c1120; }
+::-webkit-scrollbar-thumb { background: #1e2a44; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #2a3a5c; }
